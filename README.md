@@ -8,3 +8,4 @@ rn boilerplate
 - dotenv
 - fonts (OpenSans as an example)
 - colors (folder styles)
+- asyncstorage
