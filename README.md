@@ -9,3 +9,4 @@ rn boilerplate
 - fonts (OpenSans as an example)
 - colors (folder styles)
 - asyncstorage
+- react-native-responsive-dimensions
