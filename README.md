@@ -11,3 +11,4 @@ rn boilerplate
 - asyncstorage
 - react-native-responsive-dimensions
 - babel-plugin-transform-remove-console
+- react-native-responsive-screen
