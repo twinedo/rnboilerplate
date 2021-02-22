@@ -10,3 +10,4 @@ rn boilerplate
 - colors (folder styles)
 - asyncstorage
 - react-native-responsive-dimensions
+- babel-plugin-transform-remove-console
