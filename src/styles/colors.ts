@@ -27,3 +27,4 @@ export const BLUE3 = '#165091';
 export const BLUE4 = '#1F3E7C';
 export const ORANGE = '#FFA000';
 export const YELLOW = '#FED500';
+export const PINK = 'pink';
