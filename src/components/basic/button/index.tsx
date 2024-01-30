@@ -7,7 +7,7 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 import React, {ReactNode} from 'react';
-import {BLACK, PRIMARY} from 'styles/colors';
+import {BLACK, PRIMARY, WHITE} from 'styles/colors';
 
 type IButtonProps = {
   children?: ReactNode | boolean;
@@ -30,7 +30,7 @@ const Button = (props: IButtonProps & TouchableOpacityProps) => {
     containerStyle,
     onPress,
     children,
-    textColor,
+    textColor = WHITE,
     backgroundColor = PRIMARY,
   } = props;
   return (
