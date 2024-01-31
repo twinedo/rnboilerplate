@@ -10,7 +10,7 @@ import {
 import {GREY8} from 'styles/colors';
 import globalStyles from 'styles/globalStyles';
 
-interface IInputProps extends TextInputProps {
+export interface IInputProps extends TextInputProps {
   prefix?: ReactNode;
   postfix?: ReactNode;
   style?: TextStyle | TextStyle[];

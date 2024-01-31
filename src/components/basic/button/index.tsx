@@ -43,9 +43,9 @@ const Button = (props: IButtonProps & TouchableOpacityProps) => {
       ]}
       onPress={onPress}>
       {prefix}
-      {typeof children === 'string' ? (
+      {typeof children === 'string' || text !== undefined ? (
         <Text style={[styles.text, {...textStyle}, {color: textColor}]}>
-          {text}
+          {children}
         </Text>
       ) : (
         children
