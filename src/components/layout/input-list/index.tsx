@@ -8,39 +8,41 @@ import {ViewStyle} from 'react-native';
 import {IInputProps} from 'components/basic/input';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export type IFormType = {
+export type IFormField<T = Record<string, any>> = {
+  [key: string]: keyof T;
+};
+
+export type IFormType<T = Record<string, any>> = {
   id: number;
   title: string;
   placeholder: string;
-  name: keyof IFormField;
+  name: keyof IFormField<T>;
   type: KeyboardType;
+  secureTextEntry?: boolean;
   isText: boolean;
   isOption?: boolean;
   isDate?: boolean;
   isAttach?: boolean;
-  prefix?: any;
-  postfix?: any;
+  prefix?: React.ReactNode;
+  postfix?: React.ReactNode;
   options?: any[];
 };
 
-export type IFormField = {
-  username: string;
-  password: string;
-};
+export type IFormFieldValues<T = Record<string, any>> = IFormField<T>;
 
-export type TInputListProps = {
-  form: IFormType[];
-  initialValues: IFormField;
+export type TInputListProps<T = Record<string, any>> = {
+  form: IFormType<T>[];
+  initialValues: IFormFieldValues<T>;
   containerStyle?: ViewStyle | ViewStyle[];
   containerInputStyle?: ViewStyle | ViewStyle[];
   titleStyle?: TextStyle | TextStyle[];
   inputProps?: IInputProps;
   submitComponent: (handleSubmit: () => void) => React.ReactNode;
   validationSchema?: any;
-  onSubmit: (values: IFormField) => void;
+  onSubmit: (values: IFormField<T>) => void;
 };
 
-export default function InputList(props: TInputListProps) {
+export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
   const {
     form,
     initialValues,
@@ -83,10 +85,13 @@ export default function InputList(props: TInputListProps) {
                 <Input
                   placeholder={o.placeholder}
                   onChangeText={handleChange(o.name)}
-                  onBlur={handleBlur(o.name)}
+                  onBlur={handleBlur(o.name) || (() => {})}
                   value={values[o.name].toString()}
                   containerStyle={{...containerInputStyle}}
                   keyboardType={o.type}
+                  secureTextEntry={o.secureTextEntry}
+                  prefix={o.prefix}
+                  postfix={o.postfix}
                   {...inputProps}
                 />
 
@@ -98,7 +103,7 @@ export default function InputList(props: TInputListProps) {
                       globalStyles.columnGap,
                     ]}>
                     <Ionicons name="information" color="red" size={24} />
-                    <Text>{errors[o.name]?.toString()}</Text>
+                    <Text>{errors[o.name]!.toString()}</Text>
                   </View>
                 ) : null}
               </View>
