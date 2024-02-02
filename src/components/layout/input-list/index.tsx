@@ -1,32 +1,50 @@
 import {StyleSheet, Text, TextStyle, View} from 'react-native';
-import React, {useState} from 'react';
-import {Input} from 'components/basic';
+import React, {ReactNode, useState} from 'react';
+import {Input, Spacer} from 'components/basic';
 import {Formik} from 'formik';
 import {KeyboardType} from 'react-native';
 import globalStyles from 'styles/globalStyles';
 import {ViewStyle} from 'react-native';
 import {IInputProps} from 'components/basic/input';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Foundation from 'react-native-vector-icons/Foundation';
+import {WHITE} from 'styles/colors';
+import DateTimePickerModal, {
+  DateTimePickerProps,
+} from 'react-native-modal-datetime-picker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import DropDownPicker, {
+  DropDownPickerProps,
+  ItemType,
+} from 'react-native-dropdown-picker';
 
 export type IFormField<T = Record<string, any>> = {
   [key: string]: keyof T;
 };
 
+export type DropdownItemScheme = {
+  label: string; // required
+  value: string; // required
+  icon?: ReactNode;
+  parent?: string;
+  selectable?: boolean;
+  disabled?: boolean;
+  testID?: string;
+  containerStyle?: ViewStyle | ViewStyle[];
+  labelStyle?: TextStyle | TextStyle[];
+};
+
 export type IFormType<T = Record<string, any>> = {
-  id: number;
-  title: string;
+  id: string;
+  title?: string;
   placeholder: string;
   name: keyof IFormField<T>;
   type: KeyboardType;
   secureTextEntry?: boolean;
-  isText: boolean;
-  isOption?: boolean;
-  isDate?: boolean;
-  isAttach?: boolean;
+  inputType: 'text' | 'date' | 'select' | 'picker' | 'switch' | 'counter';
   prefix?: React.ReactNode;
   postfix?: React.ReactNode;
-  options?: any[];
-};
+  options: ItemType<string>[];
+} & IInputProps;
 
 export type IFormFieldValues<T = Record<string, any>> = IFormField<T>;
 
@@ -39,7 +57,9 @@ export type TInputListProps<T = Record<string, any>> = {
   inputProps?: IInputProps;
   submitComponent: (handleSubmit: () => void) => React.ReactNode;
   validationSchema?: any;
-  onSubmit: (values: IFormField<T>) => void;
+  onSubmit: (values: any) => void;
+  dropdownPickerProps?: DropDownPickerProps<any>;
+  dateTimePickerProps?: DateTimePickerProps;
 };
 
 export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
@@ -55,6 +75,12 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
     onSubmit,
   } = props;
   const [formList] = useState<IFormType[]>(form);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
   return (
     <View>
@@ -71,7 +97,7 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
           touched,
         }) => (
           <View>
-            {formList.map((o: IFormType) => (
+            {formList.map((o: IFormType, index: number) => (
               <View
                 key={o.id.toString()}
                 style={[
@@ -79,22 +105,72 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                   globalStyles.relative,
                   {...containerStyle},
                 ]}>
-                <Text style={[globalStyles.headingBlack.h3, {...titleStyle}]}>
-                  {o.title}
-                </Text>
-                <Input
-                  placeholder={o.placeholder}
-                  onChangeText={handleChange(o.name)}
-                  onBlur={handleBlur(o.name) || (() => {})}
-                  value={values[o.name].toString()}
-                  containerStyle={{...containerInputStyle}}
-                  keyboardType={o.type}
-                  secureTextEntry={o.secureTextEntry}
-                  prefix={o.prefix}
-                  postfix={o.postfix}
-                  {...inputProps}
-                />
+                {typeof o.title === 'string' && (
+                  <Text style={[globalStyles.headingBlack.h3, {...titleStyle}]}>
+                    {o.title}
+                  </Text>
+                )}
+                <Spacer height={10} />
+                {o.inputType === 'text' && (
+                  <Input
+                    placeholder={o.placeholder}
+                    onChangeText={handleChange(o.name)}
+                    onBlur={handleBlur(o.name) || (() => {})}
+                    value={values[o.name].toString()}
+                    containerStyle={{...containerInputStyle}}
+                    keyboardType={o.type}
+                    secureTextEntry={o.secureTextEntry}
+                    prefix={o.prefix}
+                    postfix={o.postfix}
+                    {...inputProps}
+                  />
+                )}
+                {o.inputType === 'date' && (
+                  <>
+                    <Input
+                      placeholder={o.placeholder}
+                      onChangeText={() => setDatePickerVisibility(true)}
+                      onPressIn={() => setDatePickerVisibility(true)}
+                      onBlur={handleBlur(o.name) || (() => {})}
+                      value={values[o.name].toString()}
+                      containerStyle={{...containerInputStyle}}
+                      keyboardType={o.type}
+                      secureTextEntry={o.secureTextEntry}
+                      prefix={o.prefix}
+                      postfix={
+                        <AntDesign
+                          name="calendar"
+                          size={24}
+                          onPress={() => setDatePickerVisibility(true)}
+                        />
+                      }
+                      {...inputProps}
+                    />
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="date"
+                      onConfirm={val => handleChange(o.name)(val.toString())}
+                      onCancel={hideDatePicker}
+                      {...props.dateTimePickerProps}
+                    />
+                  </>
+                )}
 
+                {o.inputType === 'picker' ||
+                  (o.inputType === 'select' && (
+                    <DropDownPicker
+                      open={isDropdownVisible}
+                      theme="LIGHT"
+                      value={values[o.name].toString()}
+                      items={o.options}
+                      setOpen={setIsDropdownVisible}
+                      setValue={(value: any) => handleChange(o.name)(value)}
+                      zIndex={3000 + index}
+                      zIndexInverse={1000 + index}
+                      {...props.dropdownPickerProps}
+                    />
+                  ))}
+                <Spacer height={10} />
                 {errors[o.name] && touched[o.name] ? (
                   <View
                     style={[
@@ -102,8 +178,10 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                       globalStyles.alignCenter,
                       globalStyles.columnGap,
                     ]}>
-                    <Ionicons name="information" color="red" size={24} />
-                    <Text>{errors[o.name]!.toString()}</Text>
+                    <Foundation name="info" color="red" size={24} />
+                    <Text style={[globalStyles.headingRegular.h3]}>
+                      {errors[o.name]!.toString()}
+                    </Text>
                   </View>
                 ) : null}
               </View>

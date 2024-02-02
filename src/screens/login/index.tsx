@@ -4,6 +4,9 @@ import InputList, {IFormType} from 'components/layout/input-list';
 import {Button} from 'components/basic';
 import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {NavParam} from 'navigations/types';
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required('Required'),
@@ -16,26 +19,29 @@ export type TLoginField = {
 };
 
 export default function Login() {
+  const navigation = useNavigation<StackNavigationProp<NavParam, 'Login'>>();
   const [formList, setFormList] = useState<IFormType[]>([
     {
-      id: 1,
+      id: '1',
       title: 'Username',
       placeholder: 'Username',
       name: 'username',
       type: 'default',
-      isText: true,
+      inputType: 'text',
+      options: [],
     },
     {
-      id: 2,
+      id: '2',
       title: 'Password',
       placeholder: 'Password',
       name: 'password',
       type: 'default',
-      isText: true,
+      inputType: 'text',
       secureTextEntry: true,
       postfix: (
         <Ionicons name="eye" size={24} onPress={() => _onSecureTextEntry(1)} />
       ),
+      options: [],
     },
   ]);
 
@@ -62,7 +68,8 @@ export default function Login() {
         onSubmit={values => console.log('val', values)}
         submitComponent={handleSubmit => (
           <Button
-            onPress={handleSubmit}
+            // onPress={handleSubmit}
+            onPress={() => navigation.navigate('Home')}
             containerStyle={{borderRadius: 5, margin: 10}}>
             Submit
           </Button>
