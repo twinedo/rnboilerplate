@@ -1,56 +1,60 @@
-import {StyleSheet, Text, TextStyle, View} from 'react-native';
-import React, {ReactNode, useState} from 'react';
-import {Input, Spacer} from 'components/basic';
+import {
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  Switch,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useState} from 'react';
+import {Counter, Input, Spacer} from 'components/basic';
 import {Formik} from 'formik';
 import {KeyboardType} from 'react-native';
 import globalStyles from 'styles/globalStyles';
 import {ViewStyle} from 'react-native';
 import {IInputProps} from 'components/basic/input';
 import Foundation from 'react-native-vector-icons/Foundation';
-import {WHITE} from 'styles/colors';
+import {GREY8} from 'styles/colors';
 import DateTimePickerModal, {
   DateTimePickerProps,
 } from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import DropDownPicker, {
-  DropDownPickerProps,
-  ItemType,
-} from 'react-native-dropdown-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SelectDropdown, {
+  SelectDropdownProps,
+} from 'react-native-select-dropdown';
 
-export type IFormField<T = Record<string, any>> = {
-  [key: string]: keyof T;
+export type IFormField<T = Record<any, any> | boolean> = {
+  [key: string | number]: keyof T;
 };
 
-export type DropdownItemScheme = {
-  label: string; // required
-  value: string; // required
-  icon?: ReactNode;
-  parent?: string;
-  selectable?: boolean;
-  disabled?: boolean;
-  testID?: string;
-  containerStyle?: ViewStyle | ViewStyle[];
-  labelStyle?: TextStyle | TextStyle[];
-};
-
-export type IFormType<T = Record<string, any>> = {
+export type IFormType<T = Record<any, any>> = {
   id: string;
   title?: string;
   placeholder: string;
   name: keyof IFormField<T>;
-  type: KeyboardType;
+  type?: KeyboardType;
   secureTextEntry?: boolean;
-  inputType: 'text' | 'date' | 'select' | 'picker' | 'switch' | 'counter';
+  inputType:
+    | 'text'
+    | 'textarea'
+    | 'date'
+    | 'select'
+    | 'picker'
+    | 'switch'
+    | 'counter'
+    | 'radio';
   prefix?: React.ReactNode;
   postfix?: React.ReactNode;
-  options: ItemType<string>[];
+  options: string[] | object[];
 } & IInputProps;
 
 export type IFormFieldValues<T = Record<string, any>> = IFormField<T>;
 
 export type TInputListProps<T = Record<string, any>> = {
   form: IFormType<T>[];
-  initialValues: IFormFieldValues<T>;
+  initialValues: IFormField<T>;
   containerStyle?: ViewStyle | ViewStyle[];
   containerInputStyle?: ViewStyle | ViewStyle[];
   titleStyle?: TextStyle | TextStyle[];
@@ -58,7 +62,8 @@ export type TInputListProps<T = Record<string, any>> = {
   submitComponent: (handleSubmit: () => void) => React.ReactNode;
   validationSchema?: any;
   onSubmit: (values: any) => void;
-  dropdownPickerProps?: DropDownPickerProps<any>;
+  selectDropdownProps?: SelectDropdownProps;
+  selectDropdownKeyValue?: string | '';
   dateTimePickerProps?: DateTimePickerProps;
 };
 
@@ -73,14 +78,19 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
     validationSchema,
     submitComponent,
     onSubmit,
+    selectDropdownProps,
+    selectDropdownKeyValue,
+    dateTimePickerProps,
   } = props;
   const [formList] = useState<IFormType[]>(form);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
+
+  const [isSwitch, setIsSwitch] = useState(false);
+  const toggleSwitch = () => setIsSwitch(previousState => !previousState);
 
   return (
     <View>
@@ -95,9 +105,10 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
           values,
           errors,
           touched,
+          setFieldValue,
         }) => (
           <View>
-            {formList.map((o: IFormType, index: number) => (
+            {formList.map((o: IFormType) => (
               <View
                 key={o.id.toString()}
                 style={[
@@ -125,6 +136,22 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                     {...inputProps}
                   />
                 )}
+                {o.inputType === 'textarea' && (
+                  <Input
+                    placeholder={o.placeholder}
+                    onChangeText={handleChange(o.name)}
+                    onBlur={handleBlur(o.name) || (() => {})}
+                    value={values[o.name].toString()}
+                    keyboardType={o.type}
+                    prefix={o.prefix}
+                    postfix={o.postfix}
+                    multiline={o.multiline}
+                    numberOfLines={o.numberOfLines}
+                    containerStyle={{...containerInputStyle}}
+                    style={styles.textAreaStyle}
+                    {...inputProps}
+                  />
+                )}
                 {o.inputType === 'date' && (
                   <>
                     <Input
@@ -132,6 +159,7 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                       onChangeText={() => setDatePickerVisibility(true)}
                       onPressIn={() => setDatePickerVisibility(true)}
                       onBlur={handleBlur(o.name) || (() => {})}
+                      onFocus={() => setDatePickerVisibility(true)}
                       value={values[o.name].toString()}
                       containerStyle={{...containerInputStyle}}
                       keyboardType={o.type}
@@ -149,27 +177,93 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
                       mode="date"
-                      onConfirm={val => handleChange(o.name)(val.toString())}
+                      onConfirm={val => {
+                        handleChange(o.name)(val.toString());
+                        setDatePickerVisibility(false);
+                      }}
                       onCancel={hideDatePicker}
-                      {...props.dateTimePickerProps}
+                      {...dateTimePickerProps}
                     />
                   </>
                 )}
 
-                {o.inputType === 'picker' ||
-                  (o.inputType === 'select' && (
-                    <DropDownPicker
-                      open={isDropdownVisible}
-                      theme="LIGHT"
-                      value={values[o.name].toString()}
-                      items={o.options}
-                      setOpen={setIsDropdownVisible}
-                      setValue={(value: any) => handleChange(o.name)(value)}
-                      zIndex={3000 + index}
-                      zIndexInverse={1000 + index}
-                      {...props.dropdownPickerProps}
-                    />
-                  ))}
+                {(o.inputType === 'picker' || o.inputType === 'select') && (
+                  <SelectDropdown
+                    data={o.options}
+                    onSelect={(selectedItem, i) => {
+                      console.log(selectedItem, i);
+                    }}
+                    buttonStyle={[
+                      styles.btnStyle,
+                      selectDropdownProps?.buttonStyle,
+                    ]}
+                    buttonTextStyle={styles.btnTextStyle}
+                    renderDropdownIcon={() => (
+                      <Ionicons name="chevron-down" size={24} />
+                    )}
+                    defaultButtonText="Select"
+                    buttonTextAfterSelection={selectedItem => {
+                      if (typeof selectedItem === 'object') {
+                        return selectedItem[selectDropdownKeyValue!];
+                      } else {
+                        return selectedItem;
+                      }
+                    }}
+                    rowTextForSelection={item => {
+                      if (typeof item === 'object') {
+                        return item[selectDropdownKeyValue!];
+                      } else {
+                        return item;
+                      }
+                    }}
+                    {...selectDropdownProps}
+                  />
+                )}
+                {o.inputType === 'radio' && (
+                  <View
+                    style={[
+                      globalStyles.row,
+                      globalStyles.alignCenter,
+                      globalStyles.flexWrap,
+                    ]}>
+                    {o.options.map(item => (
+                      <TouchableOpacity
+                        style={[globalStyles.displayFlex]}
+                        onPress={() => handleChange(o.name)(item as string)}>
+                        <MaterialCommunityIcons
+                          name={
+                            item === values[o.name]
+                              ? 'circle-slice-8'
+                              : 'circle-outline'
+                          }
+                          size={24}
+                          color={GREY8}
+                        />
+                        <Text style={[globalStyles.headingRegular.h3]}>
+                          {item.toString()}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+                {o.inputType === 'switch' && (
+                  <Switch
+                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                    thumbColor={values[o.name] ? '#f5dd4b' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => {
+                      toggleSwitch();
+                      setFieldValue(o.name as string, !values[o.name]);
+                    }}
+                    value={isSwitch}
+                  />
+                )}
+                {o.inputType === 'counter' && (
+                  <Counter
+                    onChangeValue={val => setFieldValue(o.name as string, val)}
+                    defaultValue={values[o.name] as number}
+                  />
+                )}
                 <Spacer height={10} />
                 {errors[o.name] && touched[o.name] ? (
                   <View
@@ -196,4 +290,18 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
 
 const styles = StyleSheet.create({
   container: {marginVertical: 10, marginHorizontal: 10},
+  btnStyle: {
+    borderWidth: 1,
+    borderRadius: 5,
+    justifyContent: 'flex-start',
+    borderColor: GREY8,
+    width: '100%',
+    backgroundColor: 'transparent',
+  },
+  btnTextStyle: {
+    textAlign: 'left',
+    marginHorizontal: 0,
+    color: GREY8,
+  },
+  textAreaStyle: {textAlignVertical: 'top'},
 });
