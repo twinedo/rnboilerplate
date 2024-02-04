@@ -24,33 +24,47 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import SelectDropdown, {
   SelectDropdownProps,
 } from 'react-native-select-dropdown';
+import moment from 'moment';
+
+type TFieldTypes =
+  | 'text'
+  | 'textarea'
+  | 'password'
+  | 'date'
+  | 'select'
+  | 'picker'
+  | 'switch'
+  | 'counter'
+  | 'radio';
+
+type TFieldOptions = string[] | object[];
 
 export type IFormField<T = Record<any, any> | boolean> = {
-  [key: string | number]: keyof T;
+  [key: string | number]: T[keyof T];
 };
+
+export type TField<T extends TFieldOptions = TFieldOptions> = {
+  id: string;
+  title?: string;
+  placeholder: string;
+  name: keyof IFormField;
+  type: 'default';
+  inputType: TFieldTypes;
+  options: T;
+} & IInputProps;
 
 export type IFormType<T = Record<any, any>> = {
   id: string;
   title?: string;
   placeholder: string;
   name: keyof IFormField<T>;
-  type?: KeyboardType;
+  type?: KeyboardType & 'password';
   secureTextEntry?: boolean;
-  inputType:
-    | 'text'
-    | 'textarea'
-    | 'date'
-    | 'select'
-    | 'picker'
-    | 'switch'
-    | 'counter'
-    | 'radio';
+  inputType: TFieldTypes;
   prefix?: React.ReactNode;
   postfix?: React.ReactNode;
   options: string[] | object[];
 } & IInputProps;
-
-export type IFormFieldValues<T = Record<string, any>> = IFormField<T>;
 
 export type TInputListProps<T = Record<string, any>> = {
   form: IFormType<T>[];
@@ -65,9 +79,15 @@ export type TInputListProps<T = Record<string, any>> = {
   selectDropdownProps?: SelectDropdownProps;
   selectDropdownKeyValue?: string | '';
   dateTimePickerProps?: DateTimePickerProps;
+  formatDate?:
+    | 'DD-MM-YYYY'
+    | 'DD/MM/YYYY'
+    | 'DD-MMM-YYYY'
+    | 'DD/MMM/YYYY'
+    | string;
 };
 
-export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
+export default function InputList(props: TInputListProps<IFormField>) {
   const {
     form,
     initialValues,
@@ -81,6 +101,7 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
     selectDropdownProps,
     selectDropdownKeyValue,
     dateTimePickerProps,
+    formatDate = 'DD-MM-YYYY',
   } = props;
   const [formList] = useState<IFormType[]>(form);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -91,6 +112,8 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
 
   const [isSwitch, setIsSwitch] = useState(false);
   const toggleSwitch = () => setIsSwitch(previousState => !previousState);
+
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   return (
     <View>
@@ -122,7 +145,7 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                   </Text>
                 )}
                 <Spacer height={10} />
-                {o.inputType === 'text' && (
+                {(o.inputType === 'text' || o.inputType === 'password') && (
                   <Input
                     placeholder={o.placeholder}
                     onChangeText={handleChange(o.name)}
@@ -130,9 +153,21 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                     value={values[o.name].toString()}
                     containerStyle={{...containerInputStyle}}
                     keyboardType={o.type}
-                    secureTextEntry={o.secureTextEntry}
+                    secureTextEntry={
+                      o.inputType === 'password' ? !isShowPassword : false
+                    }
                     prefix={o.prefix}
-                    postfix={o.postfix}
+                    postfix={
+                      o.inputType === 'password' ? (
+                        <Ionicons
+                          name={!isShowPassword ? 'eye' : 'eye-off'}
+                          size={24}
+                          onPress={() => setIsShowPassword(!isShowPassword)}
+                        />
+                      ) : (
+                        o.postfix
+                      )
+                    }
                     {...inputProps}
                   />
                 )}
@@ -178,7 +213,7 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                       isVisible={isDatePickerVisible}
                       mode="date"
                       onConfirm={val => {
-                        handleChange(o.name)(val.toString());
+                        handleChange(o.name)(moment(val).format(formatDate));
                         setDatePickerVisibility(false);
                       }}
                       onCancel={hideDatePicker}
@@ -228,7 +263,11 @@ export default function InputList<T>(props: TInputListProps<IFormField<T>>) {
                     ]}>
                     {o.options.map(item => (
                       <TouchableOpacity
-                        style={[globalStyles.displayFlex]}
+                        style={[
+                          globalStyles.displayFlex,
+                          globalStyles.row,
+                          globalStyles.columnGap,
+                        ]}
                         onPress={() => handleChange(o.name)(item as string)}>
                         <MaterialCommunityIcons
                           name={

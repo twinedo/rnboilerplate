@@ -1,7 +1,7 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import globalStyles from 'styles/globalStyles';
-import InputList, {IFormField, IFormType} from 'components/layout/input-list';
+import InputList, {TField} from 'components/layout/input-list';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from 'components/basic';
 
@@ -17,7 +17,7 @@ export type THomeField = {
 };
 
 export default function Home() {
-  const [formList, setFormList] = useState<IFormType[]>([
+  const [formList] = useState<TField[]>([
     {
       id: '1',
       title: 'Username',
@@ -33,9 +33,7 @@ export default function Home() {
       placeholder: 'Password',
       name: 'password',
       type: 'default',
-      inputType: 'text',
-      secureTextEntry: true,
-      postfix: <Ionicons name="eye" size={24} />,
+      inputType: 'password',
       options: [],
     },
     {
@@ -61,6 +59,7 @@ export default function Home() {
       title: 'Switch',
       placeholder: 'Switch',
       name: 'switch',
+      type: 'default',
       inputType: 'switch',
       options: [],
     },
@@ -105,7 +104,7 @@ export default function Home() {
         globalStyles.verticalDefaultPadding,
       ]}>
       <ScrollView>
-        <InputList<THomeField>
+        <InputList
           form={formList}
           initialValues={{
             username: '',
