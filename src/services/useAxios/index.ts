@@ -2,14 +2,13 @@ import {BASE_URL} from '@env';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
-type ConfigProps = {
+export type ConfigProps = {
   url: string;
   method: 'get' | 'post' | 'put' | 'delete' | 'patch';
   params?: object;
   data?: any;
   headers?: any;
   cancelToken?: any;
-  isAuth?: boolean;
 };
 
 const instance = axios.create();
@@ -64,15 +63,7 @@ const instance = axios.create();
 // );
 
 export const _useAxios = async (props: ConfigProps) => {
-  const {
-    url,
-    method,
-    params,
-    data,
-    headers,
-    cancelToken,
-    isAuth = true,
-  } = props;
+  const {url, method, params, data, headers, cancelToken} = props;
 
   try {
     const response: AxiosResponse = await instance({

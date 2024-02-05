@@ -1,4 +1,6 @@
 export type NavParam = {
-  Login: undefined;
   Home: undefined;
+  InputComponent: undefined;
+  Login: undefined;
+  UseFetch: undefined;
 };

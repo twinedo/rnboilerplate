@@ -37,31 +37,14 @@ export default function Login() {
       name: 'password',
       type: 'default',
       inputType: 'text',
-      secureTextEntry: true,
-      postfix: (
-        <Ionicons name="eye" size={24} onPress={() => _onSecureTextEntry(1)} />
-      ),
       options: [],
     },
   ]);
 
-  const _onSecureTextEntry = (i: number) => {
-    const dat = [...formList];
-    dat[i].secureTextEntry = !dat[i].secureTextEntry;
-    dat[i].postfix = (
-      <Ionicons
-        name={dat[i].secureTextEntry ? 'eye' : 'eye-off'}
-        size={24}
-        onPress={() => _onSecureTextEntry(1)}
-      />
-    );
-    setFormList(dat);
-  };
-
   return (
     <View>
       <Text>Login</Text>
-      <InputList<TLoginField>
+      <InputList
         form={formList}
         initialValues={{username: '', password: ''}}
         validationSchema={LoginSchema}

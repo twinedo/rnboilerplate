@@ -58,7 +58,7 @@ export type IFormType<T = Record<any, any>> = {
   title?: string;
   placeholder: string;
   name: keyof IFormField<T>;
-  type?: KeyboardType & 'password';
+  type?: KeyboardType;
   secureTextEntry?: boolean;
   inputType: TFieldTypes;
   prefix?: React.ReactNode;
