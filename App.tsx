@@ -6,6 +6,9 @@ import {Text, View} from 'react-native';
 import globalStyles from 'styles/globalStyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PINK} from 'styles/colors';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -45,9 +48,11 @@ const App = () => {
         </View>
       )}
 
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <Navigation />
+        </NavigationContainer>
+      </QueryClientProvider>
     </>
   );
 };

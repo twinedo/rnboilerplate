@@ -7,7 +7,7 @@ export type ConfigProps = {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch';
   params?: object;
   data?: any;
-  headers?: any;
+  headers?: object;
   cancelToken?: any;
 };
 
