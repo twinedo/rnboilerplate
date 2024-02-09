@@ -7,6 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NavParam} from 'navigations/types';
+import {useLoginAPI} from 'services/api/auth';
+import {useAppSelector} from 'stores/hooks';
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required('Required'),
@@ -41,6 +43,11 @@ export default function Login() {
     },
   ]);
 
+  const {login} = useLoginAPI();
+  const authState = useAppSelector(state => state.auth);
+
+  console.log('authSTate', authState);
+
   return (
     <View>
       <Text>Login</Text>
@@ -48,11 +55,14 @@ export default function Login() {
         form={formList}
         initialValues={{username: '', password: ''}}
         validationSchema={LoginSchema}
-        onSubmit={values => console.log('val', values)}
+        onSubmit={values => {
+          console.log('val', values);
+          login();
+        }}
         submitComponent={handleSubmit => (
           <Button
-            // onPress={handleSubmit}
-            onPress={() => navigation.navigate('Home')}
+            onPress={handleSubmit}
+            // onPress={() => navigation.navigate('Home')}
             containerStyle={{borderRadius: 5, margin: 10}}>
             Submit
           </Button>

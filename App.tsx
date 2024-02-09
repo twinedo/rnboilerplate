@@ -7,8 +7,13 @@ import globalStyles from 'styles/globalStyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PINK} from 'styles/colors';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {Provider} from 'react-redux';
+import {store} from 'stores/store';
+import {PersistGate} from 'redux-persist/integration/react';
+import {persistStore} from 'redux-persist';
 
 const queryClient = new QueryClient();
+let persistor = persistStore(store);
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -48,11 +53,15 @@ const App = () => {
         </View>
       )}
 
-      <QueryClientProvider client={queryClient}>
-        <NavigationContainer>
-          <Navigation />
-        </NavigationContainer>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+              <Navigation />
+            </NavigationContainer>
+          </QueryClientProvider>
+        </PersistGate>
+      </Provider>
     </>
   );
 };
