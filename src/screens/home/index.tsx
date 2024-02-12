@@ -38,6 +38,26 @@ export default function Home() {
       title: 'useFetch',
       navigate: 'UseFetch',
     },
+    {
+      id: 3,
+      title: 'Bottom Navigation',
+      navigate: 'BottomNav',
+    },
+    {
+      id: 4,
+      title: 'Top Navigation',
+      navigate: 'TopNav',
+    },
+    {
+      id: 5,
+      title: 'Side Navigation',
+      navigate: 'SideNav',
+    },
+    {
+      id: 6,
+      title: 'Animations',
+      navigate: 'Animations',
+    },
   ]);
 
   return (
