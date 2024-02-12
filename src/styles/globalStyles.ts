@@ -194,6 +194,9 @@ const createdStyles = StyleSheet.create({
     left: percentageWidth(4.2),
     right: percentageWidth(4.2),
   },
+  bgTransparent: {
+    backgroundColor: 'transparent',
+  },
 });
 
 const textStyles = {
