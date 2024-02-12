@@ -53,6 +53,11 @@ export default function Home() {
       title: 'Side Navigation',
       navigate: 'SideNav',
     },
+    {
+      id: 6,
+      title: 'Animations',
+      navigate: 'Animations',
+    },
   ]);
 
   return (
