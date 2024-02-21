@@ -7,7 +7,7 @@ import {
   ViewStyle,
   TextInputProps,
 } from 'react-native';
-import {GREY8} from 'styles/colors';
+import {BLACK, GREY8} from 'styles/colors';
 import globalStyles from 'styles/globalStyles';
 
 export interface IInputProps extends TextInputProps {
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 8,
+    color: BLACK,
   },
   postfix: {
     padding: 8,
