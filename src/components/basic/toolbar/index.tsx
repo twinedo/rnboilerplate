@@ -48,11 +48,9 @@ const Toolbar = (props: ToolbarProps & ViewProps) => {
         {prefix}
       </View>
       {typeof children === 'string' ? (
-        <View style={[styles.middle, {...middleStyle}]}>
-          <Text style={[globalStyles.headingBold.h3, {...textStyle}]}>
-            {children}
-          </Text>
-        </View>
+        <Text style={[globalStyles.headingBold.h3, {...textStyle}]}>
+          {text}
+        </Text>
       ) : (
         <View style={[styles.middle, {...middleStyle}]}>{children}</View>
       )}

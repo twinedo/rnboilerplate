@@ -25,7 +25,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'pokedexapp' do
+target 'rnboilerplate' do
   config = use_native_modules!
 
   use_react_native!(
@@ -39,7 +39,7 @@ target 'pokedexapp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'pokedexappTests' do
+  target 'rnboilerplateTests' do
     inherit! :complete
     # Pods for testing
   end
