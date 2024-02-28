@@ -3,13 +3,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollViewProps,
-  SafeAreaView,
   ViewProps,
   ViewStyle,
   StyleSheet,
 } from 'react-native';
 import globalStyles from 'styles/globalStyles';
 import ScrollableContainer from './ScrollableContainer';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 type IBaseContainerProps = {
   scrollable?: boolean;

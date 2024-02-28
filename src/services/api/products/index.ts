@@ -28,7 +28,7 @@ interface IParams {
   limit?: number;
 }
 
-export function useGetProducts({
+export function useGetPokemons({
   page = 0,
   page_size,
   search,
@@ -36,7 +36,7 @@ export function useGetProducts({
 }: IParams) {
   const {...rest} = useQuery({
     queryKey: [
-      'useGetProducts',
+      'useGetPokemons',
       JSON.stringify({page, page_size, search, limit}),
     ],
     queryFn: async () => {
@@ -44,31 +44,16 @@ export function useGetProducts({
         const response = await _useAxios({
           url: '/post',
           method: 'get',
-          headers: {
-            'app-id': APP_ID,
-          },
           params: {
             page: page,
             limit: limit,
           },
         });
         console.log('response', response);
-        return {
-          isSuccess: true,
-          isError: false,
-          message: 'Success',
-          error: null,
-          data: response.data,
-        };
+        return response?.data;
       } catch (error) {
         console.log('error get products', error);
-        return {
-          isSuccess: false,
-          isError: true,
-          message: 'Error get products',
-          error: error,
-          data: null,
-        };
+        return error;
       }
     },
     refetchOnMount: true,

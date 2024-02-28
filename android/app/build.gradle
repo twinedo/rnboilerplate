@@ -75,9 +75,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.rnboilerplate"
+    namespace "com.pokedexapp"
     defaultConfig {
-        applicationId "com.rnboilerplate"
+        applicationId "com.pokedexapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
