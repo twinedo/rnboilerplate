@@ -64,6 +64,8 @@ export type IFormType<T = Record<any, any>> = {
   prefix?: React.ReactNode;
   postfix?: React.ReactNode;
   options: string[] | object[];
+  selectDropdownTextKey?: string | null;
+  selectDropdownValueKey?: string | null;
 } & IInputProps;
 
 export type TInputListProps<T = Record<string, any>> = {
@@ -85,6 +87,8 @@ export type TInputListProps<T = Record<string, any>> = {
     | 'DD-MMM-YYYY'
     | 'DD/MMM/YYYY'
     | string;
+  ListHeaderComponent?: React.ReactNode;
+  ListFooterComponent?: React.ReactNode;
 };
 
 export default function InputList(props: TInputListProps<IFormField>) {
@@ -102,8 +106,10 @@ export default function InputList(props: TInputListProps<IFormField>) {
     selectDropdownKeyValue,
     dateTimePickerProps,
     formatDate = 'DD-MM-YYYY',
+    ListHeaderComponent,
+    ListFooterComponent,
   } = props;
-  const [formList] = useState<IFormType[]>(form);
+  const [formList, setFormList] = useState<IFormType[]>(form);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const hideDatePicker = () => {
@@ -114,6 +120,12 @@ export default function InputList(props: TInputListProps<IFormField>) {
   const toggleSwitch = () => setIsSwitch(previousState => !previousState);
 
   const [isShowPassword, setIsShowPassword] = useState(false);
+
+  const togglePasswordVisibility = (index: number) => {
+    const dat = [...formList];
+    dat[index].secureTextEntry = !dat[index].secureTextEntry;
+    setFormList(dat);
+  };
 
   return (
     <View>
@@ -131,7 +143,8 @@ export default function InputList(props: TInputListProps<IFormField>) {
           setFieldValue,
         }) => (
           <View>
-            {formList.map((o: IFormType) => (
+            {ListHeaderComponent}
+            {formList.map((o: IFormType, i: number) => (
               <View
                 key={o.id.toString()}
                 style={[
@@ -140,9 +153,13 @@ export default function InputList(props: TInputListProps<IFormField>) {
                   {...containerStyle},
                 ]}>
                 {typeof o.title === 'string' && (
-                  <Text style={[globalStyles.headingBlack.h3, {...titleStyle}]}>
-                    {o.title}
-                  </Text>
+                  <>
+                    <Text
+                      style={[globalStyles.headingBlack.h3, {...titleStyle}]}>
+                      {o.title}
+                    </Text>
+                    <Spacer height={10} />
+                  </>
                 )}
                 <Spacer height={10} />
                 {(o.inputType === 'text' || o.inputType === 'password') && (
@@ -154,15 +171,15 @@ export default function InputList(props: TInputListProps<IFormField>) {
                     containerStyle={{...containerInputStyle}}
                     keyboardType={o.type}
                     secureTextEntry={
-                      o.inputType === 'password' ? !isShowPassword : false
+                      o.inputType === 'password' ? !o.secureTextEntry : false
                     }
                     prefix={o.prefix}
                     postfix={
                       o.inputType === 'password' ? (
                         <Ionicons
-                          name={!isShowPassword ? 'eye' : 'eye-off'}
+                          name={!o.secureTextEntry ? 'eye' : 'eye-off'}
                           size={24}
-                          onPress={() => setIsShowPassword(!isShowPassword)}
+                          onPress={() => togglePasswordVisibility(i)}
                         />
                       ) : (
                         o.postfix
@@ -198,14 +215,15 @@ export default function InputList(props: TInputListProps<IFormField>) {
                       value={values[o.name].toString()}
                       containerStyle={{...containerInputStyle}}
                       keyboardType={o.type}
-                      secureTextEntry={o.secureTextEntry}
                       prefix={o.prefix}
                       postfix={
-                        <AntDesign
-                          name="calendar"
-                          size={24}
-                          onPress={() => setDatePickerVisibility(true)}
-                        />
+                        o.postfix !== undefined && (
+                          <AntDesign
+                            name="calendar"
+                            size={24}
+                            onPress={() => setDatePickerVisibility(true)}
+                          />
+                        )
                       }
                       {...inputProps}
                     />
@@ -225,28 +243,39 @@ export default function InputList(props: TInputListProps<IFormField>) {
                 {(o.inputType === 'picker' || o.inputType === 'select') && (
                   <SelectDropdown
                     data={o.options}
-                    onSelect={(selectedItem, i) => {
-                      console.log(selectedItem, i);
+                    onSelect={(selectedItem, idx) => {
+                      console.log(selectedItem, idx);
+                      if (typeof selectedItem === 'object') {
+                        handleChange(o.name)(
+                          selectedItem[o.selectDropdownValueKey!].toString(),
+                        );
+                      } else {
+                        handleChange(o.name)(selectedItem);
+                      }
                     }}
                     buttonStyle={[
                       styles.btnStyle,
                       selectDropdownProps?.buttonStyle,
                     ]}
                     buttonTextStyle={styles.btnTextStyle}
-                    renderDropdownIcon={() => (
-                      <Ionicons name="chevron-down" size={24} />
-                    )}
-                    defaultButtonText="Select"
+                    renderDropdownIcon={() =>
+                      o.postfix === undefined ? (
+                        <Ionicons name="chevron-down" size={24} />
+                      ) : (
+                        o.postfix
+                      )
+                    }
+                    defaultButtonText={o.placeholder}
                     buttonTextAfterSelection={selectedItem => {
                       if (typeof selectedItem === 'object') {
-                        return selectedItem[selectDropdownKeyValue!];
+                        return selectedItem[o.selectDropdownTextKey!];
                       } else {
                         return selectedItem;
                       }
                     }}
                     rowTextForSelection={item => {
                       if (typeof item === 'object') {
-                        return item[selectDropdownKeyValue!];
+                        return item[o.selectDropdownTextKey!];
                       } else {
                         return item;
                       }
@@ -291,10 +320,9 @@ export default function InputList(props: TInputListProps<IFormField>) {
                     thumbColor={values[o.name] ? '#f5dd4b' : '#f4f3f4'}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={() => {
-                      toggleSwitch();
                       setFieldValue(o.name as string, !values[o.name]);
                     }}
-                    value={isSwitch}
+                    value={values[o.name] as boolean}
                   />
                 )}
                 {o.inputType === 'counter' && (
@@ -319,6 +347,7 @@ export default function InputList(props: TInputListProps<IFormField>) {
                 ) : null}
               </View>
             ))}
+            {ListFooterComponent}
             {submitComponent(handleSubmit)}
           </View>
         )}
