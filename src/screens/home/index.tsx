@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import globalStyles from 'styles/globalStyles';
-import InputList, {TField} from 'components/layout/input-list';
+import InputList, {TField} from 'components/organism/input-list';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Spacer} from 'components/basic';
+import {Button, Spacer} from 'components/atoms';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NavParam} from 'navigations/types';

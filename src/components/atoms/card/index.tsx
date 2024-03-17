@@ -1,18 +1,11 @@
-import {
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {Pressable, PressableProps, StyleSheet, ViewStyle} from 'react-native';
 import React, {ReactNode} from 'react';
 import globalStyles from 'styles/globalStyles';
 import {WHITE} from 'styles/colors';
 
 export type TCard = {
   children: ReactNode;
-  containerStyle: ViewStyle | ViewStyle[];
+  containerStyle?: ViewStyle | ViewStyle[];
 } & PressableProps;
 
 export default function Card({children, containerStyle}: TCard) {

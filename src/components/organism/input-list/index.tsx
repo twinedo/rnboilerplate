@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Counter, Input, Spacer} from 'components/basic';
+
 import {Formik} from 'formik';
 import {KeyboardType} from 'react-native';
 import globalStyles from 'styles/globalStyles';
 import {ViewStyle} from 'react-native';
-import {IInputProps} from 'components/basic/input';
+import {IInputProps} from 'components/molecules/input';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {GREY8} from 'styles/colors';
 import DateTimePickerModal, {
@@ -25,6 +25,8 @@ import SelectDropdown, {
   SelectDropdownProps,
 } from 'react-native-select-dropdown';
 import moment from 'moment';
+import {Spacer} from 'components/atoms';
+import {Counter, Input} from 'components/molecules';
 
 type TFieldTypes =
   | 'text'

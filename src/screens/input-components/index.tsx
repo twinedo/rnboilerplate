@@ -1,8 +1,8 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import globalStyles from 'styles/globalStyles';
-import InputList, {TField} from 'components/layout/input-list';
-import {Button} from 'components/basic';
+import InputList, {TField} from 'components/organism/input-list';
+import {Button} from 'components/atoms';
 
 export type THomeField = {
   username: string;

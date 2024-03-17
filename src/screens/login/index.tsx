@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import InputList, {IFormType} from 'components/layout/input-list';
-import {Button} from 'components/basic';
+import InputList, {IFormType} from 'components/organism/input-list';
+import {Button} from 'components/atoms';
 import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';

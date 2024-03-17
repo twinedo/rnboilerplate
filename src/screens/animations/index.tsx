@@ -1,7 +1,7 @@
 import {StyleSheet, Text, TextProps, TextStyle, View} from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import globalStyles from 'styles/globalStyles';
-import {Button, Input, Spacer} from 'components/basic';
+import {Button, Spacer} from 'components/atoms';
 import Animated, {
   Easing,
   useAnimatedStyle,
