@@ -1,13 +1,14 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import InputList, {IFormType} from 'components/organism/input-list';
 import {Button} from 'components/atoms';
 import * as Yup from 'yup';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NavParam} from 'navigations/types';
 import globalStyles from 'styles/globalStyles';
+import {InputListHook} from 'components/organism';
+import {IFormField, IFormType} from 'components/organism/input-listhook';
+import {yupResolver} from '@hookform/resolvers/yup';
 
 const RegisterSchema = Yup.object().shape({
   username: Yup.string().required('Required'),
@@ -26,7 +27,7 @@ export default function Login() {
       id: '1',
       title: 'Username',
       placeholder: 'Username',
-      name: 'username',
+      name: 'username' as keyof IFormField,
       type: 'default',
       inputType: 'text',
       options: [],
@@ -35,9 +36,9 @@ export default function Login() {
       id: '2',
       title: 'Password',
       placeholder: 'Password',
-      name: 'password',
+      name: 'password' as keyof IFormField,
       type: 'default',
-      inputType: 'text',
+      inputType: 'password',
       options: [],
     },
   ]);
@@ -45,10 +46,10 @@ export default function Login() {
   return (
     <View>
       <Text>Login</Text>
-      <InputList
+      <InputListHook
         form={formList}
         initialValues={{username: '', password: ''}}
-        validationSchema={RegisterSchema}
+        resolver={yupResolver(RegisterSchema)}
         onSubmit={values => console.log('val', values)}
         ListFooterComponent={
           <Pressable style={[globalStyles.horizontalDefaultPadding]}>

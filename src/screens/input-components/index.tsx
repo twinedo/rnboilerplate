@@ -1,8 +1,9 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import globalStyles from 'styles/globalStyles';
-import InputList, {TField} from 'components/organism/input-list';
+import {IFormType} from 'components/organism/input-listhook';
 import {Button} from 'components/atoms';
+import {InputListHook} from 'components/organism';
 
 export type THomeField = {
   username: string;
@@ -16,7 +17,7 @@ export type THomeField = {
 };
 
 export default function InputComponent() {
-  const [formList] = useState<TField[]>([
+  const [formList] = useState<IFormType[]>([
     {
       id: '1',
       title: 'Username',
@@ -51,7 +52,12 @@ export default function InputComponent() {
       name: 'select',
       type: 'default',
       inputType: 'picker',
-      options: ['test1', 'test2'],
+      options: [
+        {label: 'test1', value: 'test1'},
+        {label: 'test2', value: 'test2'},
+      ],
+      selectDropdownTextKey: 'label',
+      selectDropdownValueKey: 'value',
     },
     {
       id: '5',
@@ -103,7 +109,7 @@ export default function InputComponent() {
         globalStyles.verticalDefaultPadding,
       ]}>
       <ScrollView>
-        <InputList
+        <InputListHook
           form={formList}
           initialValues={{
             username: '',
@@ -116,7 +122,7 @@ export default function InputComponent() {
             textarea: '',
           }}
           onSubmit={values => console.log('val', values)}
-          selectDropdownKeyValue="value"
+          // selectDropdownKeyValue="value"
           submitComponent={handleSubmit => (
             <Button
               onPress={handleSubmit}
