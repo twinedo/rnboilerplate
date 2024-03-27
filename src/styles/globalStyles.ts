@@ -2,7 +2,7 @@ import {StyleSheet, ImageResizeMode} from 'react-native';
 
 import {BLACK, GREY2, GREY3, PRIMARY, RED, SECONDARY, WHITE} from './colors';
 import fontFamily from './fontFamily';
-import {percentageHeight, percentageWidth} from 'utils/screenSize';
+import {percentageHeight, percentageWidth} from 'utils/sizes';
 
 function percentageImage(
   w: string | number | any,

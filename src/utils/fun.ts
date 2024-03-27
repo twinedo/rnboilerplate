@@ -24,3 +24,19 @@ export function _getInitials(str: string) {
 
   return result.toUpperCase(); // Optional: Convert to uppercase
 }
+
+export function _filter(
+  data: any[],
+  key: string,
+  value: string | number | boolean,
+) {
+  return data.filter(item => item[key] === value);
+}
+
+export function _find(
+  data: any[],
+  key: string,
+  value: string | number | boolean,
+) {
+  return data.find(item => item[key] === value);
+}

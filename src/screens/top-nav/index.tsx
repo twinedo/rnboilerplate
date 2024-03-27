@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Home, Profile, Transactions} from 'screens';
 import {GREY1} from 'styles/colors';
-import {percentageWidth} from 'utils/screenSize';
+import {percentageWidth} from 'utils/sizes';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';

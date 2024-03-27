@@ -1,16 +1,6 @@
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import InputList, {
-  IFormField,
-  IFormType,
-} from 'components/organism/input-listhook';
+import InputList, {IFormType} from 'components/organism/input-list';
 import {Button} from 'components/atoms';
 import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,10 +8,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NavParam} from 'navigations/types';
 import globalStyles from 'styles/globalStyles';
-import {InputListHook} from 'components/organism';
-import {Controller, useFieldArray, useForm} from 'react-hook-form';
 
-const LoginSchema = Yup.object().shape({
+const RegisterSchema = Yup.object().shape({
   username: Yup.string().required('Required'),
   password: Yup.string().required('Required'),
 });
@@ -38,7 +26,7 @@ export default function Login() {
       id: '1',
       title: 'Username',
       placeholder: 'Username',
-      name: 'username' as keyof IFormField,
+      name: 'username',
       type: 'default',
       inputType: 'text',
       options: [],
@@ -47,33 +35,23 @@ export default function Login() {
       id: '2',
       title: 'Password',
       placeholder: 'Password',
-      name: 'password' as keyof IFormField,
+      name: 'password',
       type: 'default',
-      inputType: 'password',
+      inputType: 'text',
       options: [],
     },
   ]);
 
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {} as TLoginField,
-  });
-
-  const onSubmit = (data: TLoginField) => console.log(data);
-
   return (
-    <ScrollView>
+    <View>
       <Text>Login</Text>
       <InputList
         form={formList}
         initialValues={{username: '', password: ''}}
-        validationSchema={LoginSchema}
+        validationSchema={RegisterSchema}
         onSubmit={values => console.log('val', values)}
         ListFooterComponent={
-          <Pressable style={globalStyles.horizontalDefaultPadding}>
+          <Pressable style={[globalStyles.horizontalDefaultPadding]}>
             <Text>Register</Text>
           </Pressable>
         }
@@ -86,26 +64,7 @@ export default function Login() {
           </Button>
         )}
       />
-      <InputListHook
-        form={formList}
-        initialValues={{username: '', password: ''}}
-        validationSchema={LoginSchema}
-        onSubmit={values => console.log('val', values)}
-        ListFooterComponent={
-          <Pressable style={globalStyles.horizontalDefaultPadding}>
-            <Text>Register</Text>
-          </Pressable>
-        }
-        submitComponent={handleSubmit => (
-          <Button
-            onPress={handleSubmit}
-            // onPress={() => navigation.navigate('Home')}
-            containerStyle={{borderRadius: 5, margin: 10}}>
-            Submit
-          </Button>
-        )}
-      />
-    </ScrollView>
+    </View>
   );
 }
 

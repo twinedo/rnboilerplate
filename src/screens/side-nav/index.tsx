@@ -14,7 +14,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {NavParam} from 'navigations/types';
 import {Home, Profile, Transactions} from 'screens';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {percentageHeight} from 'utils/screenSize';
+import {percentageHeight} from 'utils/sizes';
 
 function CustomDrawerContent(props) {
   //   const {_onLogout} = authStore();
